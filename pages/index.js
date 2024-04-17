@@ -1,4 +1,6 @@
 import Head from "next/head";
+import Hero from "../components/home-page/hero";
+import FeaturedPosts from "../components/home-page/featured-posts";
 
 export default function HomePage() {
   return (
@@ -6,7 +8,8 @@ export default function HomePage() {
       <Head>
         <title>Home</title>
       </Head>
-      <h1>Hello, world!</h1>
+      <Hero />
+      <FeaturedPosts />
     </div>
   );
 }
