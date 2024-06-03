@@ -1,5 +1,6 @@
 import Head from "next/head";
 import AllPosts from "../../components/posts/all-posts";
+import { getAllPosts } from "../../lib/posts-util";
 
 export default function AllPostsPage({ posts }) {
   return (
@@ -17,44 +18,11 @@ export default function AllPostsPage({ posts }) {
 }
 
 export async function getStaticProps() {
-  const DUMMY_POSTS = [
-    {
-      slug: "getting-started-with-nextjs",
-      title: "Getting Started with NextJS",
-      image: "getting-started-nextjs.png",
-      excerpt:
-        "NextJS is a React framework that provides a great developer experience and many awesome features. In this article, you'll learn how to create a new NextJS project and deploy it on Vercel.",
-      date: "2022-02-10",
-    },
-    {
-      slug: "getting-started-with-nextjs",
-      title: "Getting Started with NextJS",
-      image: "getting-started-nextjs.png",
-      excerpt:
-        "NextJS is a React framework that provides a great developer experience and many awesome features. In this article, you'll learn how to create a new NextJS project and deploy it on Vercel.",
-      date: "2022-02-10",
-    },
-    {
-      slug: "getting-started-with-nextjs",
-      title: "Getting Started with NextJS",
-      image: "getting-started-nextjs.png",
-      excerpt:
-        "NextJS is a React framework that provides a great developer experience and many awesome features. In this article, you'll learn how to create a new NextJS project and deploy it on Vercel.",
-      date: "2022-02-10",
-    },
-    {
-      slug: "getting-started-with-nextjs",
-      title: "Getting Started with NextJS",
-      image: "getting-started-nextjs.png",
-      excerpt:
-        "NextJS is a React framework that provides a great developer experience and many awesome features. In this article, you'll learn how to create a new NextJS project and deploy it on Vercel.",
-      date: "2022-02-10",
-    },
-  ];
+  const posts = getAllPosts();
 
   return {
     props: {
-      posts: DUMMY_POSTS,
+      posts,
     },
     revalidate: 600,
   };
