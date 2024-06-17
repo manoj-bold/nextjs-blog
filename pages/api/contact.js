@@ -1,3 +1,5 @@
+import { insertDocument } from "../../lib/mongodb";
+
 export default async function handler(req, res) {
   if (req.method === "POST") {
     const { name, email, message } = req.body;
@@ -5,6 +7,19 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    res.status(201).json({ message: "Message received" });
+    const newMessage = {
+      email,
+      name,
+      message,
+    };
+
+    const result = await insertDocument("messages", newMessage);
+    newMessage._id = result.insertedId;
+
+    if (!result.success) {
+      return res.status(500).json({ error: result.message });
+    }
+
+    res.status(201).json(newMessage);
   }
 }
