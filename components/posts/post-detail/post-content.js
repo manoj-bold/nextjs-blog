@@ -1,4 +1,6 @@
 import ReactMarkdown from "react-markdown";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { atomDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 import classes from "./post-content.module.css";
 import PostHeader from "./post-header";
@@ -18,6 +20,16 @@ export default function PostContent(props) {
           width={600}
           height={300}
         />
+      );
+    },
+
+    code(code) {
+      const { className, children } = code;
+      const language = className.split("-")[1];
+      return (
+        <SyntaxHighlighter language={language} style={atomDark}>
+          {children}
+        </SyntaxHighlighter>
       );
     },
   };
