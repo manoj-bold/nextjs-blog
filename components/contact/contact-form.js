@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
+
+import Notification from "../ui/notification";
 import classes from "./contact-form.module.css";
-import { useState } from "react";
 
 export default function ContactForm() {
   const [formInput, setFormInput] = useState({
@@ -8,6 +10,20 @@ export default function ContactForm() {
     message: "",
   });
 
+  const [requestStatus, setRequestStatus] = useState();
+  const [requestError, setRequestError] = useState();
+
+  useEffect(() => {
+    if (requestStatus === "success" || requestStatus === "error") {
+      const timer = setTimeout(() => {
+        setRequestStatus(null);
+        setRequestError(null);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [requestStatus]);
+
   function handleInputChange(event) {
     const { id, value } = event.target;
     setFormInput((prevInput) => {
@@ -15,16 +31,67 @@ export default function ContactForm() {
     });
   }
 
-  function sendMessageHandler(event) {
-    event.preventDefault();
-
-    fetch("/api/contact", {
+  async function sendContactData(contactDetails) {
+    const response = await fetch("/api/contact", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(formInput),
+      body: JSON.stringify(contactDetails),
     });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Something went wrong!");
+    }
+  }
+
+  async function sendMessageHandler(event) {
+    event.preventDefault();
+
+    setRequestStatus("pending");
+
+    try {
+      await sendContactData(formInput);
+    } catch (error) {
+      setRequestError(error.message);
+      setRequestStatus("error");
+      return;
+    }
+
+    setRequestStatus("success");
+    setFormInput({
+      name: "",
+      email: "",
+      message: "",
+    });
+  }
+
+  let notification;
+
+  if (requestStatus === "pending") {
+    notification = {
+      status: "pending",
+      title: "Sending message...",
+      message: "Your message is on its way!",
+    };
+  }
+
+  if (requestStatus === "success") {
+    notification = {
+      status: "success",
+      title: "Success!",
+      message: "Message sent successfully!",
+    };
+  }
+
+  if (requestStatus === "error") {
+    notification = {
+      status: "error",
+      title: "Error!",
+      message: requestError,
+    };
   }
 
   return (
@@ -38,6 +105,7 @@ export default function ContactForm() {
               type="email"
               id="email"
               required
+              value={formInput.email}
               onChange={handleInputChange}
             />
           </div>
@@ -47,6 +115,7 @@ export default function ContactForm() {
               type="text"
               id="name"
               required
+              value={formInput.name}
               onChange={handleInputChange}
             />
           </div>
@@ -56,6 +125,8 @@ export default function ContactForm() {
           <textarea
             id="message"
             rows="5"
+            required
+            value={formInput.message}
             onChange={handleInputChange}
           ></textarea>
         </div>
@@ -64,6 +135,7 @@ export default function ContactForm() {
           <button>Send Message</button>
         </div>
       </form>
+      {notification && <Notification {...notification} />}
     </section>
   );
 }
