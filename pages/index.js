@@ -8,6 +8,10 @@ export default function HomePage({ posts }) {
     <>
       <Head>
         <title>Home</title>
+        <meta
+          name="description"
+          content="I blog about programming and web development."
+        />
       </Head>
       <Hero />
       <FeaturedPosts posts={posts} />

@@ -1,6 +1,15 @@
 import { insertDocument } from "../../lib/mongodb";
+import logger from "../../lib/logger";
 
 export default async function handler(req, res) {
+  // logger(req, res, async () => {
+  //   console.log(`${new Date().toISOString()} ${req.method} ${req.url}`);
+
+  //   if (req.method === "POST") {
+  //     console.log(req.body);
+  //   }
+  // });
+
   if (req.method === "POST") {
     const { name, email, message } = req.body;
     if (!name || !email || !message) {
